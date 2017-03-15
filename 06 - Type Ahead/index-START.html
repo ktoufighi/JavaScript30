@@ -17,6 +17,52 @@
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
+//start with an empty array
+const cities = [];
+
+//using fetch to make to http get request for the json raw data from endpoint where the url is, and that should retunr a blob of data.
+fetch(endpoint).then(blob => blob.json())
+      .then(data => cities.push(...data)); //... is spread so to get an array of all the cities we need to spread by using dot dot dot.
+
+//that's one way for getting an array of all 1000 cities by using let cities = [];
+// fetch(endpoint).then(blob => blob.json())
+//       .then(data => cities = data);
+
+function findMatches(wordToMatch, cities) {
+  return cities.filter(place => {
+    //here we need to figure out if the city matched the search query. now the word to match is going to be a varaible. we need to put the variable into regular expression.
+
+    const regex = new RegExp(wordToMatch, 'gi');
+    return place.city.match(regex) || place.state.match(regex)
+  });
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function displayMatch() {
+  const matchArray = findMatches(this.value, cities);
+  const html = matchArray.map(place => {
+    const regex = new RegExp(this.value, 'gi');
+    const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+    const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+      return `
+        <li>
+          <span class="name">${cityName}, ${stateName}</span>
+          <span class="population">${numberWithCommas(place.population)}</span>
+        </li>
+      `;
+    }).join('');
+    suggestions.innerHTML = html;
+}
+
+const searchInput = document.querySelector('.search'); //class of search
+const suggestions = document.querySelector('.suggestions'); //class of suggestions to match the query with the closest
+
+searchInput.addEventListener('change', displayMatch); //works when you clikc outside the search field.
+searchInput.addEventListener('keyup', displayMatch); //works when you click inside the search field.
+
 </script>
   </body>
 </html>

@@ -27,7 +27,33 @@
 
   <script>
     // 👀👀👀👀👀👀👀👀👀👀👀👀👀👀👀
+    const triggers = document.querySelectorAll('a');
+    const highlight = document.createElement('span');
+    highlight.classList.add('highlight');
+    document.body.append(highlight);
+
+    //add event listener when it entered ea link.
+    function highlightLink () {
+      // console.log(this);
+      const linkCoords = this.getBoundingClientRect(); //gives you all the coordinates info
+      console.log(linkCoords);
+
+      //we are going to make our own coords here to factor out how much we scroll on the page.
+      const coords = {
+        width: linkCoords.width,
+        height: linkCoords.height,
+        top: linkCoords.top + window.scrollY,
+        left: linkCoords.left + window.scrollX
+      };
+
+      highlight.style.height = `${coords.height}px`;
+      highlight.style.width = `${coords.width}px`;
+      highlight.style.transform = `translate(${coords.left}px, ${coords.top}px)`;
+
+    }
+    //next listen to mouse event.
+    triggers.forEach(a => a.addEventListener('mouseenter', highlightLink));
+
   </script>
 </body>
 </html>
-
